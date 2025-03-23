@@ -181,23 +181,25 @@ function Home() {
                 src={leftDoor} 
                 alt="Left Door"
                 className="door left-door"
-                style={{ transformOrigin: 'left center' }}
+                style={{ transformOrigin: "calc(0% + 15px) 0%" }}
                 animate={{
                   rotateY: isDoorsOpen ? -110 : 0,
                   x: isDoorsOpen ? '40%' : '0'
                  }}
-                transition={{ duration: 1.5, ease: 'easeInOut' }}
+                 transition={{ duration: 1.5, ease: 'easeInOut' }}
+
               />
               <motion.img 
                 src={rightDoor} 
                 alt="Right Door"
                 className="door right-door"
-                style={{ transformOrigin: 'right center' }}
+                style={{ transformOrigin: "calc(100% - 15px) -90%" }}
                 animate={{
                   rotateY: isDoorsOpen ? 110 : 0,
                   x: isDoorsOpen ? '-43%' : '0'
                 }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
+
               />
             </div>
             
@@ -225,7 +227,7 @@ function Home() {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Helvetica Neue', Arial, sans-serif, Aeonik;
         }
         
         html, body {
@@ -313,12 +315,13 @@ function Home() {
           justify-content: center;
           align-items: center;
           margin: 2vh 0;
+          
         }
         
         .door-frame {
           position: absolute;
           width: 100%;
-          height: 100%;
+          height: 110%;
           background: url(${doorFrame}) no-repeat center;
           background-size: cover;
           z-index: -1;
@@ -329,13 +332,13 @@ function Home() {
         .double-doors {
           position: absolute;
           width: 85%;
-          height: 92%;
+          height: 90%;
           top: -11px;
           left: -1%;
           transform: translateX(0%);
           display: flex;
           perspective: 1000px;
-          top: -90px; /* Move the doors up by adjusting the top property */
+          top: -60px; /* Move the doors up by adjusting the top property */
         }
         
         .door {
@@ -344,6 +347,7 @@ function Home() {
           height: 120%;
           transform-style: preserve-3d;
           transition: transform 1.5s ease-in-out;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         
         .left-door {
