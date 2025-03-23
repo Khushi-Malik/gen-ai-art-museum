@@ -5,13 +5,60 @@ import doorFrame from './images/doorframe.png';
 import leftDoor from './images/leftdoor.png';
 import rightDoor from './images/rightdoor.png';
 import backgroundImage from './images/background.jpg'; // Import your background image
+import VirtualGallery from './VirtualGallery';
 
 function Home() {
   const [isDoorsOpen, setIsDoorsOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [prompt, setPrompt] = useState('');
+  const [showVirtualGallery, setShowVirtualGallery] = useState(false);
+  const [galleryPaintings, setGalleryPaintings] = useState([]);
   const doorsRef = useRef(null);
   const navigate = useNavigate();
+
+  // Hardcoded paintings data - replace URLs with your actual images
+  const hardcodedPaintings = [
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+      position: [0, 1.5, -4.9],
+      rotation: [0, 0, 0],
+      size: [2, 1.5],
+      title: 'Starry Night',
+      artist: 'Vincent van Gogh'
+    },
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1200px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg',
+      position: [-4.9, 1.5, -2],
+      rotation: [0, Math.PI / 2, 0],
+      size: [1.8, 1.3],
+      title: 'Water Lilies',
+      artist: 'Claude Monet'
+    },
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/1200px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg',
+      position: [4.9, 1.5, -2],
+      rotation: [0, -Math.PI / 2, 0],
+      size: [1.2, 1.8],
+      title: 'Mona Lisa',
+      artist: 'Leonardo da Vinci'
+    },
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1200px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg',
+      position: [-2.5, 1.5, -4.9],
+      rotation: [0, 0, 0],
+      size: [2, 1.2],
+      title: 'The Creation of Adam',
+      artist: 'Michelangelo'
+    },
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/800px-The_Scream.jpg',
+      position: [2.5, 1.5, -4.9],
+      rotation: [0, 0, 0],
+      size: [1.2, 1.6],
+      title: 'The Scream',
+      artist: 'Edvard Munch'
+    }
+  ];
 
   const handleDoorsClick = () => {
     if (prompt.trim() === '') {
@@ -36,11 +83,70 @@ function Home() {
   const handleTransition = () => {
     setIsTransitioning(true);
     
-    // Navigate to museum page after transition completes
+    // Instead of navigating, prepare and show the 3D gallery
     setTimeout(() => {
-      navigate(`/museum?prompt=${encodeURIComponent(prompt)}`);
+      // Example paintings - replace this with your AI-generated content
+      const dummyPaintings = generatePaintingsFromPrompt(prompt);
+      setGalleryPaintings(dummyPaintings);
+      setShowVirtualGallery(true);
+      setIsTransitioning(false); // Reset transition state
     }, 2000);
   };
+
+  
+  // Function to close the virtual gallery
+  const handleCloseGallery = () => {
+    setShowVirtualGallery(false);
+    setIsDoorsOpen(false);
+  };
+  
+  // This function would be replaced by your AI generation logic
+  const generatePaintingsFromPrompt = (prompt) => {
+    // This is a placeholder - replace with actual AI image generation
+    return [
+      {
+        imageUrl: '/api/placeholder/400/320',
+        position: [0, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [2, 1.5],
+        title: `${prompt} Masterpiece`,
+        artist: 'AI Artist'
+      },
+      {
+        imageUrl: '/api/placeholder/320/400',
+        position: [-4.9, 1.5, -2],
+        rotation: [0, Math.PI / 2, 0],
+        size: [1.5, 2],
+        title: `${prompt} Vision`,
+        artist: 'AI Visionary'
+      },
+      {
+        imageUrl: '/api/placeholder/400/300',
+        position: [4.9, 1.5, -2],
+        rotation: [0, -Math.PI / 2, 0],
+        size: [2, 1.5],
+        title: `${prompt} Creation`,
+        artist: 'AI Creator'
+      },
+      {
+        imageUrl: '/api/placeholder/350/350',
+        position: [-2.5, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [1.5, 1.5],
+        title: `${prompt} Imagination`,
+        artist: 'AI Dreamer'
+      },
+      {
+        imageUrl: '/api/placeholder/450/300',
+        position: [2.5, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [2, 1.3],
+        title: `${prompt} Wonder`,
+        artist: 'AI Wonder'
+      }
+    ];
+  };
+  
   
   return (
     <div className="museum-home-page">
@@ -106,6 +212,13 @@ function Home() {
         <div className="inside-museum"></div>
       </div>
 
+      {/* Render the Virtual Gallery when showVirtualGallery is true */}
+      {showVirtualGallery && (
+        <VirtualGallery 
+          paintings={hardcodedPaintings} 
+          onClose={handleCloseGallery} 
+        />
+      )}
   
       <style jsx>{`
         * {
