@@ -1,81 +1,173 @@
-!pip install cohere
-!pip install nltk
-
-
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request, send_file, session, url_for
 import requests
 import cohere
 import json
-import nltk # for message post processing
+import openai 
+import os
+from pathlib import Path
+import re
+
+# Define API Keys and URLs
+COHERE_API_KEY = ''
+
+OPENAI_API_KEY = ""
+# openai.api_key = OPENAI_API_KEY
+
+EUROPEANA_API_KEY = ""
+EUROPEANA_API_URL = ""
 
 
-API_KEY = '' # API_KEY
+# Initialize Flask app
+app = Flask(__name__)
 
-# app = Flask(__name__)
+# Initialize Cohere client
+co = cohere.ClientV2(api_key=COHERE_API_KEY)
 
-# Set Cohere API Key
-co = cohere.ClientV2(api_key=API_KEY)
-	
-# models = co.models.list()
-# print(models)
-response = co.chat(
-    model="command-r-plus-08-2024",
-    messages=[
-        {
-            "role": "user",
-            "content": "follow the instruction exactly: give me one word from the English dictionary.",
-        }
-    ],
-)
+def get_paintings_by_category(category: str):
+    # Generate relevant descriptions or keywords using Cohere
+    response = co.chat(
+        model="command-r-plus-08-2024",
+        messages=[
+            {
+                "role": "user",
+                "content": f"Provide a list of 12 relevant paintings in \" for the {category} without any extra information and just the names."
+            }
+        ]
+    )
 
-response_dict = {
-    "id": response.id,
-    "message": [response.message.content[0].text.strip('\"')],
-}
-print(json.dumps(response_dict, indent=4))
-
-# @app.route('/get_artwork', methods=['POST'])
-# def get_artwork():
-#     user_input = request.json
-#     time_place_person = user_input['time_place_person']
+    # Debug: Check what content is returned by the API
+    # print(f"API Response: {response.message.content}")
     
-#     # Fetch artwork from external API (e.g., The Met)
-#     artwork_data = fetch_artwork_data(time_place_person)
+    # Extract and clean the response
+    response_dict = {
+        "id": response.id,
+        "message": [response.message.content[0].text.strip('\"')],
+    }
 
-#     # Generate comedy monologue using Cohere
-#     monologue = generate_comedy_monologue(artwork_data)
+    # Check the actual content
+    info = response_dict["message"][0]
+    # print(f"Extracted content: {info}")
 
-#     return jsonify({
-#         'artwork': artwork_data,
-#         'monologue': monologue
-#     })
+    # Split the string by newline to get individual painting lines
+    paintings = info.split("\n")
+    # print(f"Paintings split by newline: {paintings}")
 
-# def fetch_artwork_data(query):
-#     # Query external art database (example using The Met API)
-#     met_api_url = f"https://collectionapi.metmuseum.org/public/collection/v1/objects?search={query}"
-#     response = requests.get(met_api_url)
-#     data = response.json()
+    # Process the list to only extract the painting names inside quotes
+    painting_names = []
+    for painting in paintings:
+        # Regex to capture text inside quotes
+        match = re.search(r'"(.*?)"', painting.strip())  # Capture text inside quotes
+        if match:
+            painting_names.append(match.group(1).strip())
 
-#     if 'objectIDs' not in data or not data['objectIDs']:
-#         return {"error": "No artwork found."}
+    return painting_names
 
-#     artwork_id = data['objectIDs'][0]  # Pick the first result
-#     artwork_details = requests.get(f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{artwork_id}")
+# Test with the "Paris" category
+# paintings = get_paintings_by_category("1990")
+# print(f"Extracted painting names: {paintings}")
+
+# Function to call Cohere and get category
+def get_category_from_cohere(category: str):
+    # Generate a category using Cohere
+    response = co.chat(
+        model="command-r-plus-08-2024",
+        messages=[
+            {
+                "role": "user",
+                "content": f"Follow the instruction exactly: tell me about this in a funny way in just 1 minute - {category}. Start the writing in a unique and kind way for {category}. Do not start with Well."
+            }
+        ]
+    )
     
-#     return artwork_details.json()
+    # Parse the response and extract the category (one word)
+    response_dict = {
+        "id": response.id,
+        "message": [response.message.content[0].text.strip('\"')],
+    }
+    
+    info = response_dict["message"][0]
+    return info
 
-# def generate_comedy_monologue(artwork_data):
-#     # Generate a comedic monologue using Cohere's Generate API
-#     prompt = f"Write a humorous stand-up comedy monologue about this artwork: {artwork_data.get('title', 'Unknown Title')}. Include some historical facts, pop culture references, and some funny observations."
+def get_art_image(category: str):
+    params = {
+        "wskey": EUROPEANA_API_KEY,  
+        "query": category,  
+        "rows": 5,  
+        "start": 1,  
+        "profile": "rich",  
+        "media": "true",
+    }
 
-#     response = co.generate(
-#         model="command-r",  # Or "command" for standard generation
-#         prompt=prompt,
-#         max_tokens=200,
-#         temperature=0.8  # Adjust for more or less randomness
-#     )
+    response = requests.get(EUROPEANA_API_URL, params=params)
+    # print(f"[DEBUG] Request URL: {response.url}")  # Debugging: Print request URL
 
-#     return response.generations[0].text.strip()
+    if response.status_code == 200:
+        data = response.json()
+        # print(json.dumps(data, indent=4))  # Debugging: Print API response
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+        records = data.get("items", [])
+        if records:
+            artwork = records[0]
+            title = artwork.get("title", ["No Title"])[0]
+            creator = artwork.get("dcCreator", ["Unknown Creator"])[0]
+
+            # Function to extract image URL from the aggregations field
+            def get_image_url(json_data):
+                try:
+                    aggregations = json_data.get("object", {}).get("aggregations", [])
+                    if aggregations and isinstance(aggregations, list):
+                        return aggregations[0].get("edmIsShownBy")  # Get first available image
+                except Exception as e:
+                    print(f"Error extracting image URL: {e}")
+                return None  # Return None if no image is found
+
+            # Extract image URL
+            image_url = get_image_url(artwork) or artwork.get("edmIsShownBy")  # Direct image link
+            if not image_url:  
+                image_url = artwork.get("edmIsShownAt")  # Landing page if no direct image
+
+            print(f"[DEBUG] Title: {title}, Creator: {creator}, Image URL: {image_url}")
+            return title, creator, image_url
+
+    print("[ERROR] No image found for this category.")
+    return None, None, None  # If no results are found
+
+def text_to_speech(text: str):
+    client = openai.OpenAI()
+
+    speech_file_path = Path(__file__).parent / "static/speech.mp3"
+    response = client.audio.speech.create(
+            model="gpt-4o-mini-tts",
+            voice="sage",
+            input=text,
+            )
+
+    with open(speech_file_path, "wb") as audio_file:
+        audio_file.write(response.content)
+
+    return url_for("static", filename="speech.mp3")
+    
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        user_prompt = request.form['prompt']
+
+        # Fetch artwork using the extracted category (directly using the prompt)
+        art_title, art_artist, art_image = get_art_image(user_prompt)
+
+        # Get category from Cohere (if needed)
+        art_monologue = get_category_from_cohere(art_artist+" "+art_title)  # You can use this if needed
+
+        audio_file_path = text_to_speech(art_monologue)
+
+        return render_template('index.html', response=art_monologue, title=art_title, artist=art_artist, image_url=art_image[0], audio_url=audio_file_path)
+        
+    return render_template('index.html', response=None, title=None, artist=None, image_url=None, audio_url=None)
+
+@app.route("/audio/<filename>")
+def get_audio(filename):
+    return send_file(f"static/{filename}", mimetype="audio/mp3")
+
+if __name__ == '__main__':
+    app.run(debug=True)
