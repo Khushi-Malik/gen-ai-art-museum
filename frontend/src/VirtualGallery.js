@@ -13,7 +13,7 @@ const Room = ({ paintings = [] }) => {
 
   return (
     <group>
-      {/* Floor */} <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}> <planeGeometry args={[roomWidth, roomDepth]} /> <meshStandardMaterial color="#D6C7B2" /> </mesh>
+      {/* Floor */} <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}> <planeGeometry args={[roomWidth, roomDepth]} /> <meshStandardMaterial color="#C8A87C" /> </mesh>
 
       {/* Walls and Ceiling */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 4, 0]}>
