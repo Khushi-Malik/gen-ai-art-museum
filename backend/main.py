@@ -23,6 +23,7 @@ EUROPEANA_API_URL = "https://api.europeana.eu/record/v2/search.json"
 app = Flask(__name__)
 # Initialize Cohere client
 co = cohere.ClientV2(api_key=COHERE_API_KEY)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Enable CORS for all routes
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow CORS for requests from your frontend running on port 3000
@@ -34,7 +35,7 @@ def get_paintings_by_category(category: str):
         messages=[
             {
                 "role": "user",
-                "content": f"Provide a list of 12 relevant paintings in \" for the {category} without any extra information and just the names."
+                "content": f"Provide 1 relevant painting in \" for the {category} without any extra information and just the names."
             }
         ]
     )
@@ -166,13 +167,10 @@ def index():
         art_monologue = get_category_from_cohere(art_artist+" "+art_title)  # You can use this if needed
 
         audio_file_path = text_to_speech(art_monologue)
-        return jsonify({
-        "response": art_monologue,
-        "title": art_title,
-        "artist": art_artist,
-        "image_url": art_image[0] if art_image else None,
-        "audio_url": audio_file_path
-})
+
+        return jsonify({'response': art_monologue, 
+                        'title': art_title, 'artist': art_artist, 'image_url': art_image, 'audio_url': audio_file_path})
+        
 
 @app.route("/audio/<filename>")
 def get_audio(filename):

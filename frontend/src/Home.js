@@ -16,6 +16,18 @@ function Home() {
   const doorsRef = useRef(null);
   const navigate = useNavigate();
 
+  // Hardcoded paintings data - replace URLs with your actual images
+  const hardcodedPaintings = [
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+      position: [0, 1.5, -4.9],
+      rotation: [0, 0, 0],
+      size: [2, 1.5],
+      title: 'Starry Night',
+      artist: 'Vincent van Gogh'
+    },
+  ];
+
   const handleDoorsClick = async () => {
     if (prompt.trim() === '') {
       // If no prompt, just open the doors but don't transition
@@ -25,29 +37,30 @@ function Home() {
 
     try {
       const response = await fetch('http://127.0.0.1:5000', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ prompt }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
       });
 
       const data = await response.json();
-      console.log('Response from server:', data);
-      console.log("Raw API Response:", data);
-      console.log("Extracted Paintings:", generatePaintingsFromPrompt(data));
+      console.log(generatePaintingsFromPrompt(data));
 
-      if (!isDoorsOpen) {
-        setIsDoorsOpen(true);
-        setTimeout(() => {
-            handleTransition(data); // Pass data to transition
-        }, 1500);
-      } else {
+    // Open the doors first if not already open
+    if (!isDoorsOpen) {
+      setIsDoorsOpen(true);
+      // Wait for door opening animation to complete before transitioning
+      setTimeout(() => {
         handleTransition(data);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      }, 1500);
+    } else {
+      // Doors are already open, start transition immediately
+      handleTransition(data);
     }
+  } catch (error) {
+    console.error('Error:', error);
+  }
   };
 
   const handleTransition = (data) => {
@@ -58,6 +71,11 @@ function Home() {
         setGalleryPaintings(paintings);
         setShowVirtualGallery(true);
         setIsTransitioning(false);
+      // Example paintings - replace this with your AI-generated content
+      const paintings = generatePaintingsFromPrompt(data);
+      setGalleryPaintings(paintings);
+      setShowVirtualGallery(true);
+      setIsTransitioning(false); // Reset transition state
     }, 2000);
   };
   
@@ -71,6 +89,8 @@ function Home() {
   const generatePaintingsFromPrompt = (data) => {
     if (!data || !data.image_url) return [];
 
+  const generatePaintingsFromPrompt = (data) => {
+    // This is a placeholder - replace with actual AI image generation
     return [
         {
           imageUrl: data.image_url,
@@ -80,6 +100,14 @@ function Home() {
           title: data.title,
           artist: data.artist,
         }
+      {
+        imageUrl: data.image_url,
+        position: [0, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [2, 1.5],
+        title: data.title,
+        artist: data.artist,
+      }
     ];
   };
   
@@ -116,28 +144,22 @@ function Home() {
                 src={leftDoor} 
                 alt="Left Door"
                 className="door left-door"
-                style={{ transformOrigin: "calc(0% + 15px) 0%" }}
+                style={{ transformOrigin: 'left center' }}
                 animate={{
                   rotateY: isDoorsOpen ? -110 : 0,
-                  x: isDoorsOpen ? '40%' : '0'
                  }}
-                 transition={{ duration: 1.5, ease: 'easeInOut' }}
+                transition={{ duration: 1.5, ease: 'easeInOut' }}
               />
               <motion.img 
                 src={rightDoor} 
                 alt="Right Door"
                 className="door right-door"
-                style={{ transformOrigin: "calc(100% - 15px) -90%" }}
+                style={{ transformOrigin: 'right center' }}
                 animate={{
                   rotateY: isDoorsOpen ? 110 : 0,
-                  x: isDoorsOpen ? '-43%' : '0'
                 }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
               />
-            </div>
-            
-            <div className="door-instructions">
-              <p>Click the doors enter your personalized art museum</p>
             </div>
           </div>
         </div>
@@ -160,7 +182,7 @@ function Home() {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
-          font-family: 'Helvetica Neue', Arial, sans-serif, Aeonik;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         
         html, body {
@@ -221,74 +243,77 @@ function Home() {
         }
         
         .logo {
-          font-size: min(3.5rem, 10vw);
-          font-weight: 700;
-          color: #333;
-          margin-bottom: min(1rem, 2vh);
-          letter-spacing: -1px;
-          text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
+  font-family: 'Arial', sans-serif;
+  font-size: min(3.5rem, 10vw);
+  font-weight: 700;
+  color: #f5f5f5; /* Gold color for a museum vibe */
+  margin-bottom: min(1rem, 2vh);
+  letter-spacing: -1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for better visibility */
+}
         
         .tagline {
+          font-family: 'Times New Roman', Times, serif;
+
           font-size: min(1.2rem, 4vw);
-          color: #666;
+          color: black;
+          text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.6); /* White shadow */
         }
         
         /* Redesigned double-door entrance */
-        .doors-container {
-          position: relative;
-          width: min(400px, 85vw);
-          height: min(550px, 60vh);
-          perspective: 1000px;
-          cursor: pointer;
-          transition: all 2s ease;
-          z-index: 2;
-          flex-grow: 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 2vh 0;
-        }
-        
-        .door-frame {
-          position: absolute;
-          width: 100%;
-          height: 110%;
-          background: url(${doorFrame}) no-repeat center;
-          background-size: cover;
-          z-index: -1;
-          top: -60px; /* Move the doors up by adjusting the top property */
-        }
-        
-        /* Double doors */
-        .double-doors {
-          position: absolute;
-          width: 85%;
-          height: 90%;
-          top: -11px;
-          left: -1%;
-          transform: translateX(0%);
-          display: flex;
-          perspective: 1000px;
-          top: -60px; /* Move the doors up by adjusting the top property */
-        }
-        
-        .door {
-          position: absolute;
-          width: 120%;
-          height: 120%;
-          transform-style: preserve-3d;
-          transition: transform 1.5s ease-in-out;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .left-door {
-          border-radius: 0 0 0 4px;
-        }
-        
-        .right-door {
-          border-radius: 0 0 4px 0;
-        }
+.doors-container {
+  position: relative;
+  width: min(400px, 85vw);
+  height: min(550px, 60vh);
+  perspective: 1000px;
+  cursor: pointer;
+  transition: all 2s ease;
+  z-index: 2;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2vh 0;
+}
+
+.door-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(${doorFrame}) no-repeat center;
+  background-size: cover;
+  z-index: -1;
+  top: -60px; /* Move the doors up by adjusting the top property */
+}
+
+/* Double doors */
+.double-doors {
+  position: absolute;
+  width: 100%; /* Ensure the container spans the full width */
+  height: 100%; /* Ensure the container spans the full height */
+  display: flex;
+  justify-content: center; /* Center the doors */
+  align-items: center; /* Center the doors vertically */
+  perspective: 1000px;
+  top: -45px; /* Move the doors up by adjusting the top property */
+}
+
+.door {
+  width: 29%; /* Each door takes up half the container width */
+  height: 80%;
+  transform-style: preserve-3d;
+  transition: transform 1.5s ease-in-out;
+}
+
+.left-door {
+  border-radius: 0 0 0 4px;
+  transform-origin: right center; /* Ensure the left door rotates from the right edge */
+}
+
+.right-door {
+  border-radius: 0 0 4px 0;
+  transform-origin: left center; /* Ensure the right door rotates from the left edge */
+}
         
         .door-instructions {
           position: absolute;
@@ -320,8 +345,8 @@ function Home() {
           position: relative;
           width: 100%;
           max-width: min(600px, 90vw);
-          margin-top: 5vh;
-          margin-bottom: 5vh;
+          padding-top: 1vh; /* Add padding to shift the search bar up */
+  margin-bottom: 10vh; /* Adjust margin-bottom as needed */
         }
         
         .search-bar {
@@ -372,7 +397,7 @@ function Home() {
         .inside-museum {
           width: 0;
           height: 0;
-          background: #6a5acd;
+          background: #f8f8f8 ;
           border-radius: 50%;
           transition: all 2s ease;
         }
@@ -424,6 +449,6 @@ function Home() {
       `}</style>
     </div>
   );
-}
+
 
 export default Home;

@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import * as THREE from 'three';
-import { useLoader } from '@react-three/fiber';
-import { TextureLoader } from 'three';
+
 
 // Gallery Room component
 const Room = ({ paintings = [] }) => {
@@ -11,25 +10,10 @@ const Room = ({ paintings = [] }) => {
   const roomWidth = 10;
   const roomHeight = 4;
   const roomDepth = 10;
-  // const floorTexture = useLoader(TextureLoader, './textures/floor_diff_4k.jpg');
-  // const floorDisplacement = useLoader(TextureLoader, './textures/floor_disp_4k.jpg');
 
-  // floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; // Allows tiling
-  // floorTexture.repeat.set(2, 2); // Adjust tiling as needed
-  // floorDisplacement.wrapS = floorDisplacement.wrapT = THREE.RepeatWrapping;
-  // floorDisplacement.repeat.set(2, 2);
-  
   return (
     <group>
-      {/* Floor with Texture */}
-      {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[10, 10, 100, 100]} /> Higher segments for displacement
-        <meshStandardMaterial 
-          map={floorTexture} 
-          displacementMap={floorDisplacement} 
-          displacementScale={0.2} // Adjust depth effect
-        />
-      </mesh> */}
+      {/* Floor */} <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}> <planeGeometry args={[roomWidth, roomDepth]} /> <meshStandardMaterial color="#C8A87C" /> </mesh>
 
       {/* Walls and Ceiling */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 4, 0]}>
