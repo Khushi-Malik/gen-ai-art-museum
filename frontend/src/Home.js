@@ -154,10 +154,17 @@ function Home() {
       
       <div className={`container ${isTransitioning ? 'fade-out' : ''}`}>
         <div className="content-wrapper">
-          <div className="header">
-            <h1 className="logo">curAItor</h1>
-            <p className="tagline">Step into a personalized AI-generated art museum</p>
-          </div>
+        <div className="header">
+        <h1 className="logo">curAItor</h1>
+        <motion.p
+          className="tagline"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          Step into a personalized AI-generated art museum
+        </motion.p>
+      </div>
 
           {/* Move the search container above the doors */}
           <div className="search-container">
@@ -181,10 +188,10 @@ function Home() {
                 src={leftDoor} 
                 alt="Left Door"
                 className="door left-door"
-                style={{ transformOrigin: "calc(0% + 15px) 0%" }}
+                style={{ transformOrigin: "calc(0% + 1px) 50%" }}
                 animate={{
                   rotateY: isDoorsOpen ? -110 : 0,
-                  x: isDoorsOpen ? '40%' : '0'
+                  x: isDoorsOpen ? '0%' : '0'
                  }}
                  transition={{ duration: 1.5, ease: 'easeInOut' }}
 
@@ -193,10 +200,10 @@ function Home() {
                 src={rightDoor} 
                 alt="Right Door"
                 className="door right-door"
-                style={{ transformOrigin: "calc(100% - 15px) -90%" }}
+                style={{transformOrigin: "calc(100% - 1px) 50%" }}
                 animate={{
                   rotateY: isDoorsOpen ? 110 : 0,
-                  x: isDoorsOpen ? '-43%' : '0'
+                  x: isDoorsOpen ? '0%' : '0'
                 }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
 
@@ -221,6 +228,8 @@ function Home() {
           onClose={handleCloseGallery} 
         />
       )}
+      
+  
   
       <style jsx>{`
         * {
@@ -297,8 +306,15 @@ function Home() {
         }
         
         .tagline {
-          font-size: min(1.2rem, 4vw);
-          color: #666;
+          font-size: min(1rem, 2.5vw);
+          color: #E4E1DC; /* Change to white for better contrast */
+          font-weight: 500; /* Slightly bolder text */
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for depth */
+          background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+          padding: 4px 16px; /* Add padding for better spacing */
+          border-radius: 100px; /* Rounded corners */
+          display: inline-block; /* Ensure the background only covers the text */
+          margin-top: 1px; /* Add some spacing from the logo */
         }
         
         /* Redesigned double-door entrance */
@@ -320,54 +336,60 @@ function Home() {
         
         .door-frame {
           position: absolute;
-          width: 100%;
-          height: 110%;
+          width: 90%;
+          height: 100%;
+    
           background: url(${doorFrame}) no-repeat center;
           background-size: cover;
           z-index: -1;
           top: -60px; /* Move the doors up by adjusting the top property */
+          drop-shadow: 0 10px 20px rgba(0, 0, 0, 10);
         }
         
-        /* Double doors */
+        /* Double doors container */
         .double-doors {
           position: absolute;
-          width: 85%;
-          height: 90%;
-          top: -11px;
-          left: -1%;
+          width: 23%;
+          height: 77%;
+          left: 38%;
           transform: translateX(0%);
           display: flex;
           perspective: 1000px;
-          top: -60px; /* Move the doors up by adjusting the top property */
+          top: 0px; /* Move the doors up by adjusting the top property */
         }
-        
+
+        /* Generic door style */
         .door {
           position: absolute;
-          width: 120%;
-          height: 120%;
+          width: 115%;
+          height: 110%;
           transform-style: preserve-3d;
           transition: transform 1.5s ease-in-out;
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-        
+
+        /* Left door */
         .left-door {
           border-radius: 0 0 0 4px;
+          left: -65%; /* Adjust left position */
         }
-        
+
+        /* Right door */
         .right-door {
-          border-radius: 0 0 4px 0;
+          border-radius: 0 0 0 4px;
+          right: -65%; /* Adjust right position */
         }
-        
+
         .door-instructions {
           position: absolute;
-          bottom: -40px;
+          bottom: -90px;
           width: 100%;
           text-align: center;
           color: black;  /* Text color set to black */
           font-family: Georgia, serif;
           font-size: min(1rem, 3.5vw);
           text-shadow: 1px 1px 2px rgba(240, 240, 240, 0.73);  /* Text shadow set to white */
-          top: 360px;
+          top: -90px;
         }
 
         
@@ -404,6 +426,13 @@ function Home() {
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
           outline: none;
           transition: all 0.3s ease;
+
+           /* Positioning the search bar at the bottom */
+          position: fixed; /* Fixes the bar at the bottom */
+          bottom: 35px; /* Adjust this value to control how far from the bottom the bar will be */
+          left: 50%; /* Centers the search bar horizontally */
+          transform: translateX(-50%); /* Centers the search bar precisely */
+          width: 45%; /* Optional: You can adjust the widith/
         }
         
         .search-bar:focus {
@@ -455,11 +484,11 @@ function Home() {
         /* Responsive adjustments */
         @media (max-height: 600px) {
           .doors-container {
-            height: min(400px, 45vh);
+            height: min(400px, 60vh);
           }
           
           .search-container {
-            margin-bottom: 3vh;
+            margin-bottom: 5vh;
           }
           
           .content-wrapper {
@@ -476,15 +505,14 @@ function Home() {
           
           .header {
             width: 100%;
-            margin-bottom: 1vh;
+            margin-bottom: 3vh;
           }
           
           .doors-container {
-            width: min(300px, 40vw);
-            height: min(350px, 70vh);
-            margin: 0 2vw;
+            width: min(400px, 85vw);
+            height: min(550px, 60vh);
           }
-          
+        
           .search-container {
             width: min(50%, 400px);
             margin: 0;
