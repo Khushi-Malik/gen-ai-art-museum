@@ -1,5 +1,4 @@
 # gen-ai-art-museum
-CurAItor – AI-Powered Virtual Art Museum
 CurAItor is an AI-powered virtual museum that brings art to everyone, anywhere. Our project reimagines how people engage with art by creating personalized, interactive, and accessible experiences.
 
 🚀 Inspiration
