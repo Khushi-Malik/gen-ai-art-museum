@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import doorFrame from './images/doorframe.png';
 import leftDoor from './images/leftdoor.png';
 import rightDoor from './images/rightdoor.png';
+import backgroundImage from './images/background.jpg'; // Import your background image
 
 function Home() {
   const [isDoorsOpen, setIsDoorsOpen] = useState(false);
@@ -40,7 +41,7 @@ function Home() {
       navigate(`/museum?prompt=${encodeURIComponent(prompt)}`);
     }, 2000);
   };
-
+  
   return (
     <div className="museum-home-page">
       <div className="museum-exterior"></div>
@@ -51,7 +52,19 @@ function Home() {
             <h1 className="logo">curAItor</h1>
             <p className="tagline">Step into a personalized AI-generated art museum</p>
           </div>
-          
+
+          {/* Move the search container above the doors */}
+          <div className="search-container">
+            <input 
+              type="text" 
+              className="search-bar" 
+              placeholder="Type what you would like to see in your museum then click the doors..." 
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+          </div>
+
+          {/* Shift the doors container down */}
           <div className={`doors-container ${isTransitioning ? 'enlarge' : ''}`} ref={doorsRef}>
             <img src={doorFrame} alt="Door Frame" className="door-frame"/>
             
@@ -83,19 +96,8 @@ function Home() {
             </div>
             
             <div className="door-instructions">
-              <p>Click to enter your personalized art museum</p>
+              <p>Click the doors enter your personalized art museum</p>
             </div>
-          </div>
-          
-          <div className="search-container">
-            <input 
-              type="text" 
-              className="search-bar" 
-              placeholder="Enter what you'd like to see in your museum..." 
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-            <p className="instructions">Type your prompt above, then click the doors to enter</p>
           </div>
         </div>
       </div>
@@ -104,6 +106,7 @@ function Home() {
         <div className="inside-museum"></div>
       </div>
 
+  
       <style jsx>{`
         * {
           margin: 0;
@@ -127,35 +130,15 @@ function Home() {
           justify-content: center;
           align-items: center;
           overflow: hidden;
+          background-image: url(${backgroundImage}); /* Add background image */
+          background-size: cover; /* Ensure the background image covers the entire page */
+          background-position: center; /* Center the background image */
         }
         
         .museum-exterior {
           position: absolute;
           width: 100%;
           height: 100%;
-          background-color: #e8e6d9;
-          background-image: 
-            linear-gradient(90deg, rgba(191, 184, 165, 0.3) 0%, rgba(191, 184, 165, 0) 20%, rgba(191, 184, 165, 0) 80%, rgba(191, 184, 165, 0.3) 100%),
-            linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 100%);
-          z-index: -1;
-        }
-        
-        /* Column details for museum wall look */
-        .museum-exterior::before, .museum-exterior::after {
-          content: "";
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          background-image: 
-            repeating-linear-gradient(90deg, 
-              rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, 
-              transparent 1px, transparent 60px),
-            repeating-linear-gradient(0deg, 
-              rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, 
-              transparent 1px, transparent 60px);
-          z-index: -1;
         }
         
         .container {
@@ -226,6 +209,7 @@ function Home() {
           background: url(${doorFrame}) no-repeat center;
           background-size: cover;
           z-index: -1;
+          top: -60px; /* Move the doors up by adjusting the top property */
         }
         
         /* Double doors */
@@ -238,6 +222,7 @@ function Home() {
           transform: translateX(0%);
           display: flex;
           perspective: 1000px;
+          top: -90px; /* Move the doors up by adjusting the top property */
         }
         
         .door {
@@ -261,10 +246,13 @@ function Home() {
           bottom: -40px;
           width: 100%;
           text-align: center;
-          color: #666;
+          color: black;  /* Text color set to black */
+          font-family: Georgia, serif;
           font-size: min(1rem, 3.5vw);
-          text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+          text-shadow: 1px 1px 2px rgba(240, 240, 240, 0.73);  /* Text shadow set to white */
+          top: 360px;
         }
+
         
         .museum-preview {
           position: absolute;
@@ -291,7 +279,8 @@ function Home() {
         .search-bar {
           width: 100%;
           padding: min(15px, 4vw) min(20px, 5vw);
-          font-size: min(1.2rem, 4vw);
+          font-size: 0.8rem; /* Change the font size */
+          font-family: 'Roboto', sans-serif; /* Change the font family */
           border: none;
           border-radius: 30px;
           background-color: white;
@@ -676,7 +665,7 @@ export default Home;
 //             <input 
 //               type="text" 
 //               className="search-bar" 
-//               placeholder="Enter what you'd like to see in your museum..." 
+//               placeholder="Enter what you want to see in your museum then click the doors to enter your curated collection." 
 //               value={prompt}
 //               onChange={(e) => setPrompt(e.target.value)}
 //             />
