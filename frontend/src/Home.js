@@ -184,7 +184,6 @@ function Home() {
                 style={{ transformOrigin: 'left center' }}
                 animate={{
                   rotateY: isDoorsOpen ? -110 : 0,
-                  x: isDoorsOpen ? '40%' : '0'
                  }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
               />
@@ -195,7 +194,6 @@ function Home() {
                 style={{ transformOrigin: 'right center' }}
                 animate={{
                   rotateY: isDoorsOpen ? 110 : 0,
-                  x: isDoorsOpen ? '-43%' : '0'
                 }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
               />
@@ -300,60 +298,60 @@ function Home() {
         }
         
         /* Redesigned double-door entrance */
-        .doors-container {
-          position: relative;
-          width: min(400px, 85vw);
-          height: min(550px, 60vh);
-          perspective: 1000px;
-          cursor: pointer;
-          transition: all 2s ease;
-          z-index: 2;
-          flex-grow: 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 2vh 0;
-        }
-        
-        .door-frame {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background: url(${doorFrame}) no-repeat center;
-          background-size: cover;
-          z-index: -1;
-          top: -60px; /* Move the doors up by adjusting the top property */
-        }
-        
-        /* Double doors */
-        .double-doors {
-          position: absolute;
-          width: 85%;
-          height: 92%;
-          top: -11px;
-          left: -1%;
-          transform: translateX(0%);
-          display: flex;
-          perspective: 1000px;
-          top: -90px; /* Move the doors up by adjusting the top property */
-        }
-        
-        .door {
-          position: absolute;
-          width: 120%;
-          height: 120%;
-          transform-style: preserve-3d;
-          transition: transform 1.5s ease-in-out;
-        }
-        
-        .left-door {
-          border-radius: 0 0 0 4px;
-        }
-        
-        .right-door {
-          border-radius: 0 0 4px 0;
-        }
-        
+.doors-container {
+  position: relative;
+  width: min(400px, 85vw);
+  height: min(550px, 60vh);
+  perspective: 1000px;
+  cursor: pointer;
+  transition: all 2s ease;
+  z-index: 2;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2vh 0;
+}
+
+.door-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(${doorFrame}) no-repeat center;
+  background-size: cover;
+  z-index: -1;
+  top: -60px; /* Move the doors up by adjusting the top property */
+}
+
+/* Double doors */
+.double-doors {
+  position: absolute;
+  width: 58%; /* Ensure the container spans the full width */
+  height: 80%; /* Ensure the container spans the full height */
+  display: flex;
+  justify-content: center; /* Center the doors */
+  align-items: center; /* Center the doors vertically */
+  perspective: 1000px;
+  top: -7px; /* Move the doors up by adjusting the top property */
+}
+
+.door {
+  width: 50%; /* Each door takes up half the container width */
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1.5s ease-in-out;
+}
+
+.left-door {
+  border-radius: 0 0 0 4px;
+  transform-origin: right center; /* Ensure the left door rotates from the right edge */
+}
+
+.right-door {
+  border-radius: 0 0 4px 0;
+  transform-origin: left center; /* Ensure the right door rotates from the left edge */
+}
+
         .door-instructions {
           position: absolute;
           bottom: -40px;
@@ -385,8 +383,8 @@ function Home() {
           position: relative;
           width: 100%;
           max-width: min(600px, 90vw);
-          margin-top: 5vh;
-          margin-bottom: 5vh;
+          padding-top: 1vh; /* Add padding to shift the search bar up */
+  margin-bottom: 10vh; /* Adjust margin-bottom as needed */
         }
         
         .search-bar {
