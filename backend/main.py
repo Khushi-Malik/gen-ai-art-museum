@@ -6,6 +6,7 @@ import openai
 import os
 from pathlib import Path
 import re
+import flask_cors import CORS
 
 # Define API Keys and URLs
 COHERE_API_KEY = ''
@@ -22,6 +23,7 @@ app = Flask(__name__)
 
 # Initialize Cohere client
 co = cohere.ClientV2(api_key=COHERE_API_KEY)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 def get_paintings_by_category(category: str):
     # Generate relevant descriptions or keywords using Cohere
@@ -30,7 +32,7 @@ def get_paintings_by_category(category: str):
         messages=[
             {
                 "role": "user",
-                "content": f"Provide a list of 12 relevant paintings in \" for the {category} without any extra information and just the names."
+                "content": f"Provide 1 relevant painting in \" for the {category} without any extra information and just the names."
             }
         ]
     )
@@ -151,7 +153,8 @@ def text_to_speech(text: str):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        user_prompt = request.form['prompt']
+        body = request.get_json()
+        user_prompt = body.get('prompt')
 
         # Fetch artwork using the extracted category (directly using the prompt)
         art_title, art_artist, art_image = get_art_image(user_prompt)
@@ -161,9 +164,9 @@ def index():
 
         audio_file_path = text_to_speech(art_monologue)
 
-        return render_template('index.html', response=art_monologue, title=art_title, artist=art_artist, image_url=art_image[0], audio_url=audio_file_path)
+        return jsonify({'response': art_monologue, 
+                        'title': art_title, 'artist': art_artist, 'image_url': art_image, 'audio_url': audio_file_path})
         
-    return render_template('index.html', response=None, title=None, artist=None, image_url=None, audio_url=None)
 
 @app.route("/audio/<filename>")
 def get_audio(filename):
