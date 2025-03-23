@@ -383,8 +383,8 @@ function Home() {
           position: relative;
           width: 100%;
           max-width: min(600px, 90vw);
-          margin-top: 5vh;
-          margin-bottom: 5vh;
+          padding-top: 1vh; /* Add padding to shift the search bar up */
+  margin-bottom: 10vh; /* Adjust margin-bottom as needed */
         }
         
         .search-bar {
