@@ -23,7 +23,6 @@ EUROPEANA_API_URL = "https://api.europeana.eu/record/v2/search.json"
 app = Flask(__name__)
 # Initialize Cohere client
 co = cohere.ClientV2(api_key=COHERE_API_KEY)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Enable CORS for all routes
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow CORS for requests from your frontend running on port 3000
@@ -35,7 +34,7 @@ def get_paintings_by_category(category: str):
         messages=[
             {
                 "role": "user",
-                "content": f"Provide 1 relevant painting in \" for the {category} without any extra information and just the names."
+                "content": f"Provide a list of 12 relevant paintings in \" for the {category} without any extra information and just the names."
             }
         ]
     )
@@ -68,7 +67,7 @@ def get_paintings_by_category(category: str):
     return painting_names
 
 # Test with the "Paris" category
-# paintings = get_paintings_by_category("1990")
+# paintings = get_paintings_by_category("van gogh")
 # print(f"Extracted painting names: {paintings}")
 
 # Function to call Cohere and get category
@@ -137,10 +136,10 @@ def get_art_image(category: str):
     print("[ERROR] No image found for this category.")
     return None, None, None  # If no results are found
 
-def text_to_speech(text: str):
+def text_to_speech(text: str, title: str):
     client = openai.OpenAI()
 
-    speech_file_path = Path(__file__).parent / "static/speech.mp3"
+    speech_file_path = Path(__file__).parent / f"static/{title}_speech.mp3"
     response = client.audio.speech.create(
             model="gpt-4o-mini-tts",
             voice="sage",
@@ -152,25 +151,36 @@ def text_to_speech(text: str):
 
     return url_for("static", filename="speech.mp3")
 
-    
+# text_to_speech("Van gogh+Self Portrait", "self_portrait")
+# text_to_speech("Van gogh+Starry Night", "Starry Night")
+# text_to_speech("Hieronymus Bosch+The Garden of Earthly Delights", "The Garden of Earthly Delights")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        body = request.get_json()
-        user_prompt = body["prompt"]
+        # body = request.get_json()
+        # user_prompt = body["prompt"]
+        user_prompt = request.form['prompt']
 
         # Fetch artwork using the extracted category (directly using the prompt)
         art_title, art_artist, art_image = get_art_image(user_prompt)
 
         # Get category from Cohere (if needed)
         art_monologue = get_category_from_cohere(art_artist+" "+art_title)  # You can use this if needed
+        art_monologue = get_category_from_cohere(user_prompt)
+        audio_file_path = text_to_speech(art_monologue, art_title)
 
-        audio_file_path = text_to_speech(art_monologue)
-
-        return jsonify({'response': art_monologue, 
-                        'title': art_title, 'artist': art_artist, 'image_url': art_image, 'audio_url': audio_file_path})
         
+        return render_template('index.html', response=art_monologue, title=art_title, artist=art_artist, image_url=art_image[0], audio_url=audio_file_path)
+        # return jsonify({
+        # "response": art_monologue,
+        # "title": art_title,
+        # "artist": art_artist,
+        # "image_url": art_image[0] if art_image else None,
+        # "audio_url": audio_file_path
+# })
+    return render_template('index.html', response=None, title=None, artist=None, image_url=None, audio_url=None)
+
 
 @app.route("/audio/<filename>")
 def get_audio(filename):

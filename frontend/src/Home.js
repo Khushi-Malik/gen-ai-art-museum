@@ -19,61 +19,72 @@ function Home() {
   // Hardcoded paintings data - replace URLs with your actual images
   const hardcodedPaintings = [
     {
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Prhttps://upload.wikimedia.org/wikipedia/commons/7/72/El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpgoject.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
       position: [0, 1.5, -4.9],
       rotation: [0, 0, 0],
       size: [2, 1.5],
       title: 'Starry Night',
       artist: 'Vincent van Gogh'
     },
+    {
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/72/El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpg',
+      position: [-4.9, 1.5, -2],
+      rotation: [0, Math.PI / 2, 0],
+      size: [1.8, 1.3],
+      title: 'The Garden of Earthly Delights',
+      artist: 'Hieronymus Bosch'
+    },
+    {
+      imageUrl: 'https://lh3.googleusercontent.com/Ckjq-HkB2XhEsbuMsei0MR5fLTODfkcXY8qQTG-XLHVxE0jLO9DnSYaVE8n1kCrcm9AMKzoWB2w03LrY0v7eoj5hYw=s0',
+      position: [4.9, 1.5, -2],
+      rotation: [0, -Math.PI / 2, 0],
+      size: [1.2, 1.8],
+      title: 'self-portrait',
+      artist: 'Vincent van Gogh'
+    }
   ];
-
   const handleDoorsClick = async () => {
     if (prompt.trim() === '') {
       // If no prompt, just open the doors but don't transition
       setIsDoorsOpen(!isDoorsOpen);
-      return;
+      // return;
     }
 
-    try {
-      const response = await fetch('http://127.0.0.1:5000', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
-      });
+    // try {
+    //   const response = await fetch('http://127.0.0.1:5000', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ prompt }),
+    //   });
 
-      const data = await response.json();
-      console.log(generatePaintingsFromPrompt(data));
+      // const data = await response.json();
+      console.log(generatePaintingsFromPrompt(prompt));
 
     // Open the doors first if not already open
     if (!isDoorsOpen) {
       setIsDoorsOpen(true);
       // Wait for door opening animation to complete before transitioning
       setTimeout(() => {
-        handleTransition(data);
+        handleTransition();
       }, 1500);
     } else {
       // Doors are already open, start transition immediately
-      handleTransition(data);
+      handleTransition();
     }
-  } catch (error) {
-    console.error('Error:', error);
-  }
+  // } catch (error) {
+  //   console.error('Error:', error);
+  // }
   };
 
-  const handleTransition = (data) => {
+  const handleTransition = () => {
     setIsTransitioning(true);
 
     setTimeout(() => {
-        const paintings = generatePaintingsFromPrompt(data);
-        setGalleryPaintings(paintings);
-        setShowVirtualGallery(true);
-        setIsTransitioning(false);
       // Example paintings - replace this with your AI-generated content
-      const paintings = generatePaintingsFromPrompt(data);
-      setGalleryPaintings(paintings);
+      const dummyPaintings = generatePaintingsFromPrompt(prompt);
+      setGalleryPaintings(dummyPaintings);
       setShowVirtualGallery(true);
       setIsTransitioning(false); // Reset transition state
     }, 2000);
@@ -86,30 +97,68 @@ function Home() {
   };
   
   // This function would be replaced by your AI generation logic
-  const generatePaintingsFromPrompt = (data) => {
-    if (!data || !data.image_url) return [];
 
-  const generatePaintingsFromPrompt = (data) => {
+  // const generatePaintingsFromPrompt = (data) => {
+  //   // This is a placeholder - replace with actual AI image generation
+  //   return [
+  //     {
+  //       imageUrl: data.image_url,
+  //       position: [0, 1.5, -4.9],
+  //       rotation: [0, 0, 0],
+  //       size: [2, 1.5],
+  //       title: data.title,
+  //       artist: data.artist,
+  //     }
+  //   ];
+  // };
+
+  const generatePaintingsFromPrompt = (prompt) => {
     // This is a placeholder - replace with actual AI image generation
     return [
-        {
-          imageUrl: data.image_url,
-          position: [0, 1.5, -4.9],
-          rotation: [0, 0, 0],
-          size: [2, 1.5],
-          title: data.title,
-          artist: data.artist,
-        }
       {
-        imageUrl: data.image_url,
+        imageUrl: '/api/placeholder/400/320',
         position: [0, 1.5, -4.9],
         rotation: [0, 0, 0],
         size: [2, 1.5],
-        title: data.title,
-        artist: data.artist,
+        title: `${prompt} Masterpiece`,
+        artist: 'AI Artist'
+      },
+      {
+        imageUrl: '/api/placeholder/320/400',
+        position: [-4.9, 1.5, -2],
+        rotation: [0, Math.PI / 2, 0],
+        size: [1.5, 2],
+        title: `${prompt} Vision`,
+        artist: 'AI Visionary'
+      },
+      {
+        imageUrl: '/api/placeholder/400/300',
+        position: [4.9, 1.5, -2],
+        rotation: [0, -Math.PI / 2, 0],
+        size: [2, 1.5],
+        title: `${prompt} Creation`,
+        artist: 'AI Creator'
+      },
+      {
+        imageUrl: '/api/placeholder/350/350',
+        position: [-2.5, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [1.5, 1.5],
+        title: `${prompt} Imagination`,
+        artist: 'AI Dreamer'
+      },
+      {
+        imageUrl: '/api/placeholder/450/300',
+        position: [2.5, 1.5, -4.9],
+        rotation: [0, 0, 0],
+        size: [2, 1.3],
+        title: `${prompt} Wonder`,
+        artist: 'AI Wonder'
       }
     ];
   };
+  
+  
   
   return (
     <div className="museum-home-page">
@@ -172,7 +221,7 @@ function Home() {
       {/* Render the Virtual Gallery when showVirtualGallery is true */}
       {showVirtualGallery && (
         <VirtualGallery 
-          paintings={galleryPaintings} 
+          paintings={hardcodedPaintings} 
           onClose={handleCloseGallery} 
         />
       )}
@@ -449,6 +498,6 @@ function Home() {
       `}</style>
     </div>
   );
-
+}
 
 export default Home;
