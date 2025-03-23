@@ -6,22 +6,26 @@ import openai
 import os
 from pathlib import Path
 import re
+from flask_cors import CORS  # Import CORS
 
 # Define API Keys and URLs
-COHERE_API_KEY = ''
+COHERE_API_KEY = "dCyRc5BzsbXzwTbEbtSTBAe4B4p1f8MhSjDcy4Vj"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+EUROPEANA_API_KEY = os.getenv("EUROPEANA_API_KEY")
 
-OPENAI_API_KEY = ""
-# openai.api_key = OPENAI_API_KEY
+openai.api_key = OPENAI_API_KEY
 
-EUROPEANA_API_KEY = ""
-EUROPEANA_API_URL = ""
+
+EUROPEANA_API_URL = "https://api.europeana.eu/record/v2/search.json"
 
 
 # Initialize Flask app
 app = Flask(__name__)
-
 # Initialize Cohere client
 co = cohere.ClientV2(api_key=COHERE_API_KEY)
+
+# Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow CORS for requests from your frontend running on port 3000
 
 def get_paintings_by_category(category: str):
     # Generate relevant descriptions or keywords using Cohere
@@ -146,12 +150,14 @@ def text_to_speech(text: str):
         audio_file.write(response.content)
 
     return url_for("static", filename="speech.mp3")
+
     
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        user_prompt = request.form['prompt']
+        body = request.get_json()
+        user_prompt = body["prompt"]
 
         # Fetch artwork using the extracted category (directly using the prompt)
         art_title, art_artist, art_image = get_art_image(user_prompt)
@@ -160,10 +166,13 @@ def index():
         art_monologue = get_category_from_cohere(art_artist+" "+art_title)  # You can use this if needed
 
         audio_file_path = text_to_speech(art_monologue)
-
-        return render_template('index.html', response=art_monologue, title=art_title, artist=art_artist, image_url=art_image[0], audio_url=audio_file_path)
-        
-    return render_template('index.html', response=None, title=None, artist=None, image_url=None, audio_url=None)
+        return jsonify({
+        "response": art_monologue,
+        "title": art_title,
+        "artist": art_artist,
+        "image_url": art_image[0] if art_image else None,
+        "audio_url": audio_file_path
+})
 
 @app.route("/audio/<filename>")
 def get_audio(filename):
@@ -171,4 +180,3 @@ def get_audio(filename):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    

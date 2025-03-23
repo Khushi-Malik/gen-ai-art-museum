@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Box Input</title>
+</head>
+<body>
+    <h1>Enter a Prompt</h1>
+
+    <!-- Simple form to get user input -->
+    <form method="POST">
+        <label for="prompt">Enter something:</label>
+        <input type="text" id="prompt" name="prompt" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if response %}
+    <h2>Response:</h2>
+    <p>{{ response }}</p>
+    {% endif %}
+
+    {% if paintings %}
+    <h2>Paintings:</h2>
+    <ul>
+        {% for painting in paintings %}
+            <li>{{ painting }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if title %}
+    <h2>Artwork Information:</h2>
+    <p><strong>Title:</strong> {{ title }}</p>
+    <p><strong>Artist:</strong> {{ artist }}</p>
+    
+    {% if image_url %}
+    <img src="{{ image_url }}" alt="Artwork Image" style="max-width: 50%; height: auto;">
+    {% else %}
+    <p>No image available for this artwork.</p>
+    {% endif %}
+    {% endif %}
+
+    {% if audio_url %}
+    <h2>Generated Speech:</h2>
+    <audio controls>
+        <source src="{{ audio_url }}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    {% endif %}
+    
+</body>
+</html>
+
