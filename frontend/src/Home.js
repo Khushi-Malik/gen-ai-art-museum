@@ -154,17 +154,10 @@ function Home() {
       
       <div className={`container ${isTransitioning ? 'fade-out' : ''}`}>
         <div className="content-wrapper">
-        <div className="header">
-        <h1 className="logo">curAItor</h1>
-        <motion.p
-          className="tagline"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
-          Step into a personalized AI-generated art museum
-        </motion.p>
-      </div>
+          <div className="header">
+            <h1 className="logo">curAItor</h1>
+            <p className="tagline">Step into a personalized AI-generated art museum</p>
+          </div>
 
           {/* Move the search container above the doors */}
           <div className="search-container">
@@ -188,25 +181,21 @@ function Home() {
                 src={leftDoor} 
                 alt="Left Door"
                 className="door left-door"
-                style={{ transformOrigin: "calc(0% + 1px) 50%" }}
+                style={{ transformOrigin: 'left center' }}
                 animate={{
                   rotateY: isDoorsOpen ? -110 : 0,
-                  x: isDoorsOpen ? '0%' : '0'
                  }}
-                 transition={{ duration: 1.5, ease: 'easeInOut' }}
-
+                transition={{ duration: 1.5, ease: 'easeInOut' }}
               />
               <motion.img 
                 src={rightDoor} 
                 alt="Right Door"
                 className="door right-door"
-                style={{transformOrigin: "calc(100% - 1px) 50%" }}
+                style={{ transformOrigin: 'right center' }}
                 animate={{
                   rotateY: isDoorsOpen ? 110 : 0,
-                  x: isDoorsOpen ? '0%' : '0'
                 }}
                 transition={{ duration: 1.5, ease: 'easeInOut' }}
-
               />
             </div>
             
@@ -228,15 +217,13 @@ function Home() {
           onClose={handleCloseGallery} 
         />
       )}
-      
-  
   
       <style jsx>{`
         * {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
-          font-family: 'Helvetica Neue', Arial, sans-serif, Aeonik;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         
         html, body {
@@ -306,90 +293,75 @@ function Home() {
         }
         
         .tagline {
-          font-size: min(1rem, 2.5vw);
-          color: #E4E1DC; /* Change to white for better contrast */
-          font-weight: 500; /* Slightly bolder text */
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a shadow for depth */
-          background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
-          padding: 4px 16px; /* Add padding for better spacing */
-          border-radius: 100px; /* Rounded corners */
-          display: inline-block; /* Ensure the background only covers the text */
-          margin-top: 1px; /* Add some spacing from the logo */
+          font-size: min(1.2rem, 4vw);
+          color: #666;
         }
         
         /* Redesigned double-door entrance */
-        .doors-container {
-          position: relative;
-          width: min(400px, 85vw);
-          height: min(550px, 60vh);
-          perspective: 1000px;
-          cursor: pointer;
-          transition: all 2s ease;
-          z-index: 2;
-          flex-grow: 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 2vh 0;
-          
-        }
+.doors-container {
+  position: relative;
+  width: min(400px, 85vw);
+  height: min(550px, 60vh);
+  perspective: 1000px;
+  cursor: pointer;
+  transition: all 2s ease;
+  z-index: 2;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2vh 0;
+}
+
+.door-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(${doorFrame}) no-repeat center;
+  background-size: cover;
+  z-index: -1;
+  top: -60px; /* Move the doors up by adjusting the top property */
+}
+
+/* Double doors */
+.double-doors {
+  position: absolute;
+  width: 100%; /* Ensure the container spans the full width */
+  height: 100%; /* Ensure the container spans the full height */
+  display: flex;
+  justify-content: center; /* Center the doors */
+  align-items: center; /* Center the doors vertically */
+  perspective: 1000px;
+  top: -45px; /* Move the doors up by adjusting the top property */
+}
+
+.door {
+  width: 29%; /* Each door takes up half the container width */
+  height: 80%;
+  transform-style: preserve-3d;
+  transition: transform 1.5s ease-in-out;
+}
+
+.left-door {
+  border-radius: 0 0 0 4px;
+  transform-origin: right center; /* Ensure the left door rotates from the right edge */
+}
+
+.right-door {
+  border-radius: 0 0 4px 0;
+  transform-origin: left center; /* Ensure the right door rotates from the left edge */
+}
         
-        .door-frame {
-          position: absolute;
-          width: 90%;
-          height: 100%;
-    
-          background: url(${doorFrame}) no-repeat center;
-          background-size: cover;
-          z-index: -1;
-          top: -60px; /* Move the doors up by adjusting the top property */
-          drop-shadow: 0 10px 20px rgba(0, 0, 0, 10);
-        }
-        
-        /* Double doors container */
-        .double-doors {
-          position: absolute;
-          width: 23%;
-          height: 77%;
-          left: 38%;
-          transform: translateX(0%);
-          display: flex;
-          perspective: 1000px;
-          top: 0px; /* Move the doors up by adjusting the top property */
-        }
-
-        /* Generic door style */
-        .door {
-          position: absolute;
-          width: 115%;
-          height: 110%;
-          transform-style: preserve-3d;
-          transition: transform 1.5s ease-in-out;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Left door */
-        .left-door {
-          border-radius: 0 0 0 4px;
-          left: -65%; /* Adjust left position */
-        }
-
-        /* Right door */
-        .right-door {
-          border-radius: 0 0 0 4px;
-          right: -65%; /* Adjust right position */
-        }
-
         .door-instructions {
           position: absolute;
-          bottom: -90px;
+          bottom: -40px;
           width: 100%;
           text-align: center;
           color: black;  /* Text color set to black */
           font-family: Georgia, serif;
           font-size: min(1rem, 3.5vw);
           text-shadow: 1px 1px 2px rgba(240, 240, 240, 0.73);  /* Text shadow set to white */
-          top: -90px;
+          top: 360px;
         }
 
         
@@ -426,13 +398,6 @@ function Home() {
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
           outline: none;
           transition: all 0.3s ease;
-
-           /* Positioning the search bar at the bottom */
-          position: fixed; /* Fixes the bar at the bottom */
-          bottom: 35px; /* Adjust this value to control how far from the bottom the bar will be */
-          left: 50%; /* Centers the search bar horizontally */
-          transform: translateX(-50%); /* Centers the search bar precisely */
-          width: 45%; /* Optional: You can adjust the widith/
         }
         
         .search-bar:focus {
@@ -484,11 +449,11 @@ function Home() {
         /* Responsive adjustments */
         @media (max-height: 600px) {
           .doors-container {
-            height: min(400px, 60vh);
+            height: min(400px, 45vh);
           }
           
           .search-container {
-            margin-bottom: 5vh;
+            margin-bottom: 3vh;
           }
           
           .content-wrapper {
@@ -505,14 +470,15 @@ function Home() {
           
           .header {
             width: 100%;
-            margin-bottom: 3vh;
+            margin-bottom: 1vh;
           }
           
           .doors-container {
-            width: min(400px, 85vw);
-            height: min(550px, 60vh);
+            width: min(300px, 40vw);
+            height: min(350px, 70vh);
+            margin: 0 2vw;
           }
-        
+          
           .search-container {
             width: min(50%, 400px);
             margin: 0;
