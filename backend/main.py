@@ -1,5 +1,5 @@
-# !pip install cohere
-# !pip install nltk
+!pip install cohere
+!pip install nltk
 
 
 from flask import Flask, jsonify, request
