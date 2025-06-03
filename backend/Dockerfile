@@ -11,6 +11,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the rest of the backend code
 COPY . .
+EXPOSE 8080
 
 # Run the app
 CMD ["python", "server.py"]
+

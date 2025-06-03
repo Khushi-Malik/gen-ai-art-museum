@@ -1,11 +1,22 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react';
 
-function index() {
+function Index() {
+
+  const [message, setmessage] = useState("loading...");
+
+  useEffect(() => {
+    fetch('http://localhost:8080/api/home')
+    .then((response) => response.json())
+    .then((data) => {
+      setmessage(data.message);
+      })
+}, []);
+
   return (
     <div>
-      index
+      {message}
     </div>
-  )
+  );
 }
 
-export default index
+export default Index
