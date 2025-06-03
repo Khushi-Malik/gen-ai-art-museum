@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: python-backend
+    ports:
+      - "8080:8080"
+    working_dir: /app
+    command: ["python", "server.py"]  # or your correct server file
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nextjs-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
