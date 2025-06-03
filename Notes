@@ -1,0 +1,7 @@
+Correction Edits Made:
+
+- Added a virtual env to backend, so activate venv whenever using and testing: source ve
+nv/bin/activate
+- All dependencies installed in the venv
+
+
