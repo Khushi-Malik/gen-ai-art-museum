@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from "react";
 
-function Index() {
-
-  const [message, setmessage] = useState("loading...");
-
-  useEffect(() => {
-    fetch('http://localhost:8080/api/home')
-    .then((response) => response.json())
-    .then((data) => {
-      setmessage(data.message);
-      })
-}, []);
-
+export default function Home() {
   return (
-    <div>
-      {message}
+    <div className="App">
+      <header className="App-header">
+        <img src="/logo.svg" className="App-logo" alt="logo" />
+        <p>Welcome to your Next.js app!</p>
+        <a
+          className="App-link"
+          href="https://nextjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn Next.js
+        </a>
+      </header>
     </div>
   );
 }
-
-export default Index
